@@ -41,6 +41,12 @@ func main() {
 
 	log.Println("database connected")
 
+	if err := database.Migrate(db); err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("database migrated")
+
 	router := api.NewRouter()
 
 	log.Printf("server running on :%s", cfg.AppPort)
