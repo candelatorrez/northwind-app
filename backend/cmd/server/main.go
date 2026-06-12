@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/candelatorrez/northwind-app/db/seed"
 	"github.com/candelatorrez/northwind-app/internal/api"
 	"github.com/candelatorrez/northwind-app/internal/config"
 	"github.com/candelatorrez/northwind-app/internal/database"
@@ -27,16 +28,6 @@ func main() {
 		cfg.DBPassword,
 	)
 
-	clientRepo := repository.NewClientRepository(db)
-	invoiceRepo := repository.NewInvoiceRepository(db)
-	riskRepo := repository.NewRiskSnapshotRepository(db)
-
-	clientService := service.NewClientService(clientRepo)
-	dashboardService := service.NewDashboardService(clientRepo, invoiceRepo, riskRepo)
-
-	clientHandler := api.NewClientHandler(clientService)
-	dashboardHandler := api.NewDashboardHandler(dashboardService)
-
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -58,6 +49,20 @@ func main() {
 	}
 
 	log.Println("database migrated")
+
+	if err := seed.Run(db); err != nil {
+		log.Fatal("seed failed:", err)
+	}
+
+	clientRepo := repository.NewClientRepository(db)
+	invoiceRepo := repository.NewInvoiceRepository(db)
+	riskRepo := repository.NewRiskSnapshotRepository(db)
+
+	clientService := service.NewClientService(clientRepo)
+	dashboardService := service.NewDashboardService(clientRepo, invoiceRepo, riskRepo)
+
+	clientHandler := api.NewClientHandler(clientService)
+	dashboardHandler := api.NewDashboardHandler(dashboardService)
 
 	router := api.NewRouter()
 
