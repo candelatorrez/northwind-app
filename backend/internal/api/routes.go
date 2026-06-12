@@ -7,6 +7,7 @@ type Handlers struct {
 	DashboardHandler        *DashboardHandler
 	CollectionActionHandler *CollectionActionHandler
 	InvoiceHandler          *InvoiceHandler
+	RiskHandler             *RiskHandler
 }
 
 func RegisterRoutes(
@@ -26,7 +27,13 @@ func RegisterRoutes(
 
 	router.PATCH("/clients/:id/status", handlers.ClientHandler.UpdateClientStatus)
 
+	router.GET("/clients/:id/actions", handlers.CollectionActionHandler.GetActions)
+
 	router.POST("/clients/:id/actions", handlers.CollectionActionHandler.CreateAction)
+
+	router.GET("/clients/:id/risk", handlers.RiskHandler.GetLatestSnapshot)
+
+	router.POST("/clients/:id/risk-snapshots", handlers.RiskHandler.CreateSnapshot)
 
 	router.POST("/invoices/:id/pay", handlers.InvoiceHandler.MarkAsPaid)
 

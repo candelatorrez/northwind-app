@@ -62,6 +62,17 @@ func (s *CollectionActionService) CreateAction(
 	return action, nil
 }
 
+func (s *CollectionActionService) GetActionsByClientID(clientID uint) ([]domain.CollectionAction, error) {
+	if _, err := s.clientRepo.FindByID(clientID); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrClientNotFound
+		}
+		return nil, err
+	}
+
+	return s.actionRepo.FindByClientID(clientID)
+}
+
 func isValidActionType(actionType domain.ActionType) bool {
 	switch actionType {
 	case domain.ActionCall, domain.ActionEmail, domain.ActionNote:

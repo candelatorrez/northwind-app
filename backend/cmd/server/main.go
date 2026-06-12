@@ -60,14 +60,22 @@ func main() {
 	actionRepo := repository.NewCollectionActionRepository(db)
 
 	clientService := service.NewClientService(clientRepo)
+	riskService := service.NewRiskService(riskRepo, invoiceRepo, clientRepo)
 	dashboardService := service.NewDashboardService(clientRepo, invoiceRepo, riskRepo)
 	actionService := service.NewCollectionActionService(actionRepo, clientRepo)
 	invoiceService := service.NewInvoiceService(db)
+
+	if err := riskService.EnsureSnapshots(); err != nil {
+		log.Fatal("risk snapshots failed:", err)
+	}
+
+	log.Println("risk snapshots ready")
 
 	clientHandler := api.NewClientHandler(clientService)
 	dashboardHandler := api.NewDashboardHandler(dashboardService)
 	actionHandler := api.NewCollectionActionHandler(actionService)
 	invoiceHandler := api.NewInvoiceHandler(invoiceService)
+	riskHandler := api.NewRiskHandler(riskService)
 
 	router := api.NewRouter()
 
@@ -78,6 +86,7 @@ func main() {
 			DashboardHandler:        dashboardHandler,
 			CollectionActionHandler: actionHandler,
 			InvoiceHandler:          invoiceHandler,
+			RiskHandler:             riskHandler,
 		},
 	)
 

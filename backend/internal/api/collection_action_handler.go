@@ -52,3 +52,24 @@ func (h *CollectionActionHandler) CreateAction(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, action)
 }
+
+func (h *CollectionActionHandler) GetActions(c *gin.Context) {
+	clientID, err := parseUintParam(c, "id")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid client id"})
+		return
+	}
+
+	actions, err := h.actionService.GetActionsByClientID(clientID)
+	if err != nil {
+		switch err {
+		case service.ErrClientNotFound:
+			c.JSON(http.StatusNotFound, gin.H{"error": "client not found"})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, actions)
+}
