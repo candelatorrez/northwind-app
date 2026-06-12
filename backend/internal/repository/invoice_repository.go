@@ -19,6 +19,21 @@ func (r *InvoiceRepository) Create(invoice *domain.Invoice) error {
 	return r.db.Create(invoice).Error
 }
 
+func (r *InvoiceRepository) FindByID(id uint) (*domain.Invoice, error) {
+	var invoice domain.Invoice
+
+	err := r.db.First(&invoice, id).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &invoice, nil
+}
+
+func (r *InvoiceRepository) Update(invoice *domain.Invoice) error {
+	return r.db.Save(invoice).Error
+}
+
 func (r *InvoiceRepository) FindClientByID(clientID uint) ([]domain.Invoice, error) {
 	var invoices []domain.Invoice
 

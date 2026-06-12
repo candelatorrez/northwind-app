@@ -57,20 +57,27 @@ func main() {
 	clientRepo := repository.NewClientRepository(db)
 	invoiceRepo := repository.NewInvoiceRepository(db)
 	riskRepo := repository.NewRiskSnapshotRepository(db)
+	actionRepo := repository.NewCollectionActionRepository(db)
 
 	clientService := service.NewClientService(clientRepo)
 	dashboardService := service.NewDashboardService(clientRepo, invoiceRepo, riskRepo)
+	actionService := service.NewCollectionActionService(actionRepo, clientRepo)
+	invoiceService := service.NewInvoiceService(db)
 
 	clientHandler := api.NewClientHandler(clientService)
 	dashboardHandler := api.NewDashboardHandler(dashboardService)
+	actionHandler := api.NewCollectionActionHandler(actionService)
+	invoiceHandler := api.NewInvoiceHandler(invoiceService)
 
 	router := api.NewRouter()
 
 	api.RegisterRoutes(
 		router,
 		api.Handlers{
-			ClientHandler:    clientHandler,
-			DashboardHandler: dashboardHandler,
+			ClientHandler:           clientHandler,
+			DashboardHandler:        dashboardHandler,
+			CollectionActionHandler: actionHandler,
+			InvoiceHandler:          invoiceHandler,
 		},
 	)
 
