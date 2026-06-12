@@ -6,6 +6,8 @@ import (
 	"github.com/candelatorrez/northwind-app/internal/api"
 	"github.com/candelatorrez/northwind-app/internal/config"
 	"github.com/candelatorrez/northwind-app/internal/database"
+	"github.com/candelatorrez/northwind-app/internal/repository"
+	"github.com/candelatorrez/northwind-app/internal/service"
 	"github.com/joho/godotenv"
 )
 
@@ -24,6 +26,16 @@ func main() {
 		cfg.DBUser,
 		cfg.DBPassword,
 	)
+
+	clientRepo := repository.NewClientRepository(db)
+	invoiceRepo := repository.NewInvoiceRepository(db)
+	riskRepo := repository.NewRiskSnapshotRepository(db)
+
+	clientService := service.NewClientService(clientRepo)
+	dashboardService := service.NewDashboardService(clientRepo, invoiceRepo, riskRepo)
+
+	clientHandler := api.NewClientHandler(clientService)
+	dashboardHandler := api.NewDashboardHandler(dashboardService)
 
 	if err != nil {
 		log.Fatal(err)
@@ -48,6 +60,14 @@ func main() {
 	log.Println("database migrated")
 
 	router := api.NewRouter()
+
+	api.RegisterRoutes(
+		router,
+		api.Handlers{
+			ClientHandler:    clientHandler,
+			DashboardHandler: dashboardHandler,
+		},
+	)
 
 	log.Printf("server running on :%s", cfg.AppPort)
 
