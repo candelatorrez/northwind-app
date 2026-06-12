@@ -26,3 +26,11 @@ func (r *RiskSnapshotRepository) FindLatestByClientID(clientID uint) (*domain.Ri
 
 	return &risk, err
 }
+
+func (r *RiskSnapshotRepository) CountHighRisk() (int64, error) {
+	var count int64
+
+	err := r.db.Model(&domain.RiskSnapshot{}).Where("level = ?", domain.RiskHigh).Count(&count).Error
+
+	return count, err
+}

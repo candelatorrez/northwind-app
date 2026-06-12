@@ -26,3 +26,22 @@ func (r *InvoiceRepository) FindClientByID(clientID uint) ([]domain.Invoice, err
 
 	return invoices, err
 }
+
+func (r *InvoiceRepository) CountOverdue() (int64, error) {
+	var count int64
+
+	err := r.db.Model(&domain.Invoice{}).Where("status = ?", domain.InvoiceOverdue).Count(&count).Error
+
+	return count, err
+}
+
+func (r *InvoiceRepository) SumOutstandingAmount() (float64, error) {
+	var total float64
+
+	err := r.db.Model(&domain.Invoice{}).Where("status IN ?", []string{
+		string(domain.InvoicePending),
+		string(domain.InvoiceOverdue),
+	}).Select("COALESCE(SUM(amount), 0)").Scan(&total).Error
+
+	return total, err
+}
