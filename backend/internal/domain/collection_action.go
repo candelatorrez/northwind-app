@@ -23,6 +23,8 @@ type CollectionAction struct {
 
 	Notes string `gorm:"type:text"`
 
+	PerformedBy string `gorm:"size:100"`
+
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`

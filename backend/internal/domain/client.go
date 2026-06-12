@@ -15,12 +15,25 @@ const (
 	SegmentZombie     ClientSegment = "zombie"
 )
 
+type ClientStatus string
+
+const (
+	StatusActive     ClientStatus = "active"
+	StatusAtRisk     ClientStatus = "at_risk"
+	StatusDelinquent ClientStatus = "delinquent"
+	StatusSuspended  ClientStatus = "suspended"
+)
+
 type Client struct {
-	ID             uint          `gorm:"primaryKey"`
-	Name           string        `gorm:"not null"`
-	Email          string        `gorm:"not null"`
-	Segment        ClientSegment `gorm:"type:varchar(20);notnull"`
-	MonthlyBilling float64       `gorm:"not null"`
+	ID uint `gorm:"primaryKey"`
+
+	Name  string `gorm:"not null"`
+	Email string `gorm:"not null"`
+
+	Segment ClientSegment `gorm:"type:varchar(20);notnull"`
+	Status  ClientStatus  `gorm:"type:varchar(20);notnull"`
+
+	MonthlyBilling float64 `gorm:"not null"`
 
 	CreatedAt time.Time
 	UpdateAt  time.Time
