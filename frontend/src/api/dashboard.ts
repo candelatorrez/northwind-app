@@ -1,10 +1,22 @@
-import type { DashboardMetrics } from "../types/dashboard";
-import { api } from "./client";
+import axios from "axios";
 
+import type {
+  DashboardMetricsDTO,
+  DashboardMetrics,
+} from "../types/dashboard";
 
-export async function getDashboardMetricts(): Promise<DashboardMetrics> {
-    const response = await api.get<DashboardMetrics>("/dashboard/metrics")
+import { toDashboardMetrics }
+from "../adapters/dashboardAdapter";
 
-    return response.data
-};
+export async function getDashboardMetrics():
+Promise<DashboardMetrics> {
 
+  const response =
+    await axios.get<DashboardMetricsDTO>(
+      "http://localhost:8080/dashboard/metrics"
+    );
+
+  return toDashboardMetrics(
+    response.data,
+  );
+}

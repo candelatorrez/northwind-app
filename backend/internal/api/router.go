@@ -1,7 +1,45 @@
 package api
 
-import "github.com/gin-gonic/gin"
+import (
+	"time"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+)
 
 func NewRouter() *gin.Engine {
-	return gin.Default()
+
+	router := gin.Default()
+
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: []string{
+			"http://localhost:5173",
+		},
+
+		AllowMethods: []string{
+			"GET",
+			"POST",
+			"PATCH",
+			"PUT",
+			"DELETE",
+			"OPTIONS",
+		},
+
+		AllowHeaders: []string{
+			"Origin",
+			"Content-Type",
+			"Accept",
+			"Authorization",
+		},
+
+		ExposeHeaders: []string{
+			"Content-Length",
+		},
+
+		AllowCredentials: true,
+
+		MaxAge: 12 * time.Hour,
+	}))
+
+	return router
 }
