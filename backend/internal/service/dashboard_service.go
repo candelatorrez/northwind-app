@@ -51,3 +51,35 @@ func (s *DashboardService) GetMetrics() (*domain.DashboardMetrics, error) {
 		OutstandingAmount: outstanding,
 	}, nil
 }
+
+func (s *DashboardService) GetClientsOverview() ([]domain.ClientOverview, error) {
+
+	clients, err := s.clientRepo.FindAll()
+
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]domain.ClientOverview, 0)
+
+	for _, client := range clients {
+
+		snapshot, err := s.riskRepo.FindLatestByClientID(client.ID)
+
+		if err != nil {
+			continue
+		}
+
+		result = append(result, domain.ClientOverview{
+			ID:             client.ID,
+			Name:           client.Name,
+			Segment:        string(client.Segment),
+			Status:         string(client.Status),
+			MonthlyBilling: client.MonthlyBilling,
+			RiskScore:      snapshot.Score,
+			RiskLevel:      string(snapshot.Level),
+		})
+	}
+
+	return result, nil
+}

@@ -25,17 +25,17 @@ const (
 )
 
 type Client struct {
-	ID uint `gorm:"primaryKey"`
+	ID uint `gorm:"primaryKey" json:"id"`
 
-	Name  string `gorm:"not null"`
-	Email string `gorm:"not null"`
+	Name  string `gorm:"not null" json:"name"`
+	Email string `gorm:"not null" json:"email"`
 
-	Segment ClientSegment `gorm:"type:varchar(20);notnull"`
-	Status  ClientStatus  `gorm:"type:varchar(20);notnull"`
+	Segment ClientSegment `gorm:"type:varchar(20);not null" json:"segment"`
+	Status  ClientStatus  `gorm:"type:varchar(20);not null" json:"status"`
 
-	MonthlyBilling float64 `gorm:"not null"`
+	MonthlyBilling float64 `gorm:"not null" json:"monthlyBilling"`
 
-	CreatedAt time.Time
-	UpdateAt  time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }

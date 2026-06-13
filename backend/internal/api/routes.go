@@ -38,4 +38,6 @@ func RegisterRoutes(
 	router.POST("/invoices/:id/pay", handlers.InvoiceHandler.MarkAsPaid)
 
 	router.GET("/dashboard/metrics", handlers.DashboardHandler.GetMetrics)
+
+	router.GET("/dashboard/clients", handlers.DashboardHandler.GetClientsOverview)
 }
