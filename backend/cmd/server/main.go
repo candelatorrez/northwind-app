@@ -50,8 +50,16 @@ func main() {
 
 	log.Println("database migrated")
 
-	if err := seed.Run(db); err != nil {
-		log.Fatal("seed failed:", err)
+	var count int64
+
+	db.Table("clients").Count(&count)
+
+	if count == 0 {
+		if err := seed.Run(db); err != nil {
+			log.Fatal("seed failed:", err)
+		}
+	} else {
+		log.Println("data already exists")
 	}
 
 	clientRepo := repository.NewClientRepository(db)
