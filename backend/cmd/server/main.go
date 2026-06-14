@@ -71,7 +71,7 @@ func main() {
 	riskService := service.NewRiskService(riskRepo, invoiceRepo, clientRepo)
 	dashboardService := service.NewDashboardService(clientRepo, invoiceRepo, riskRepo)
 	actionService := service.NewCollectionActionService(actionRepo, clientRepo)
-	invoiceService := service.NewInvoiceService(db)
+	invoiceService := service.NewInvoiceService(db, invoiceRepo)
 
 	if err := riskService.EnsureSnapshots(); err != nil {
 		log.Fatal("risk snapshots failed:", err)
@@ -82,7 +82,7 @@ func main() {
 	clientHandler := api.NewClientHandler(clientService)
 	dashboardHandler := api.NewDashboardHandler(dashboardService)
 	actionHandler := api.NewCollectionActionHandler(actionService)
-	invoiceHandler := api.NewInvoiceHandler(invoiceService)
+	invoiceHandler := api.NewInvoiceHandler(invoiceService, riskService)
 	riskHandler := api.NewRiskHandler(riskService)
 
 	router := api.NewRouter()

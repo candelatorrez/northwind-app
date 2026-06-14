@@ -29,6 +29,8 @@ func RegisterRoutes(
 
 	router.GET("/clients/:id/actions", handlers.CollectionActionHandler.GetActions)
 
+	router.GET("/clients/:id/invoices", handlers.InvoiceHandler.GetInvoicesByClientID)
+
 	router.POST("/clients/:id/actions", handlers.CollectionActionHandler.CreateAction)
 
 	router.GET("/clients/:id/risk", handlers.RiskHandler.GetLatestSnapshot)

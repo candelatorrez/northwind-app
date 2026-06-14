@@ -21,7 +21,7 @@ func NewCollectionActionHandler(actionService *service.CollectionActionService) 
 type createCollectionActionRequest struct {
 	Type        domain.ActionType `json:"type" binding:"required"`
 	Notes       string            `json:"notes"`
-	PerformedBy string            `json:"performed_by"`
+	PerformedBy string            `json:"performed_by" binding:"required"`
 }
 
 func (h *CollectionActionHandler) CreateAction(c *gin.Context) {

@@ -48,7 +48,7 @@ CREATE TABLE collection_actions (
 
     notes TEXT,
 
-    performed_by VARCHAR(100),
+    performed_by VARCHAR(100) NOT NULL,
 
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );

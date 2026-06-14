@@ -15,17 +15,17 @@ const (
 )
 
 type CollectionAction struct {
-	ID uint `gorm:"primaryKey"`
+	ID uint `gorm:"primaryKey" json:"id"`
 
-	ClientID uint `gorm:"index;not null"`
+	ClientID uint `gorm:"index;not null" json:"clientId"`
 
-	Type ActionType `gorm:"type:varchar(20);not null"`
+	Type ActionType `gorm:"type:varchar(20);not null" json:"type"`
 
-	Notes string `gorm:"type:text"`
+	Notes string `gorm:"type:text" json:"notes"`
 
-	PerformedBy string `gorm:"size:100"`
+	PerformedBy string `gorm:"size:100;not null" json:"performedBy"`
 
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json"updatedAt"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deteledAt"`
 }

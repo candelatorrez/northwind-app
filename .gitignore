@@ -1,0 +1,18 @@
+.env
+backend/server.exe
+frontend/node_modules
+**/vendor/
+*.exe
+*.log
+bin/
+*.swp
+*.tmp
+
+# Go
+*.test
+*.exe
+_output/
+
+# Editor
+.vscode/
+.idea/

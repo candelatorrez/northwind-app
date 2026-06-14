@@ -5,16 +5,19 @@ import (
 	"time"
 
 	"github.com/candelatorrez/northwind-app/internal/domain"
+	"github.com/candelatorrez/northwind-app/internal/repository"
 	"gorm.io/gorm"
 )
 
 type InvoiceService struct {
-	db *gorm.DB
+	db          *gorm.DB
+	invoiceRepo *repository.InvoiceRepository
 }
 
-func NewInvoiceService(db *gorm.DB) *InvoiceService {
+func NewInvoiceService(db *gorm.DB, invoiceRepo *repository.InvoiceRepository) *InvoiceService {
 	return &InvoiceService{
-		db: db,
+		db:          db,
+		invoiceRepo: invoiceRepo,
 	}
 }
 
@@ -58,4 +61,8 @@ func (s *InvoiceService) MarkAsPaid(invoiceID uint) (*domain.Invoice, error) {
 	}
 
 	return &updatedInvoice, nil
+}
+
+func (s *InvoiceService) GetInvoicesByClientID(clientID uint) ([]domain.Invoice, error) {
+	return s.invoiceRepo.FindClientByID(clientID)
 }

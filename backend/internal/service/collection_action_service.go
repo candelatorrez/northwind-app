@@ -14,6 +14,7 @@ var (
 	ErrInvoiceAlreadyPaid  = errors.New("invoice already paid")
 	ErrInvalidClientStatus = errors.New("invalid client status")
 	ErrInvalidActionType   = errors.New("invalid action type")
+	ErrPerformedByRequired = errors.New("performed_by is required")
 )
 
 type CollectionActionService struct {
@@ -39,6 +40,10 @@ func (s *CollectionActionService) CreateAction(
 ) (*domain.CollectionAction, error) {
 	if !isValidActionType(actionType) {
 		return nil, ErrInvalidActionType
+	}
+
+	if performedBy == "" {
+		return nil, ErrPerformedByRequired
 	}
 
 	if _, err := s.clientRepo.FindByID(clientID); err != nil {

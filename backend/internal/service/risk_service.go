@@ -52,6 +52,38 @@ func (s *RiskService) CalculateScore(daysOverdue int) int {
 	}
 }
 
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func (s *RiskService) CalculateScoreWithSegment(daysOverdue int, segment domain.ClientSegment) int {
+	base := s.CalculateScore(daysOverdue)
+
+	switch segment {
+	case domain.SegmentEnterprise:
+		return max(0, base-20)
+	case domain.SegmentStartup:
+		return min(100, base+20)
+	case domain.SegmentZombie:
+		if daysOverdue >= 30 {
+			return 95
+		}
+		return min(100, base+30)
+	default:
+		return base
+	}
+}
+
 func (s *RiskService) CalculateDaysOverdue(invoices []domain.Invoice) int {
 	now := time.Now()
 	maxDays := 0
@@ -91,7 +123,8 @@ func (s *RiskService) buildSnapshot(clientID uint, daysOverdue int) *domain.Risk
 }
 
 func (s *RiskService) SnapshotClient(clientID uint) (*domain.RiskSnapshot, error) {
-	if _, err := s.clientRepo.FindByID(clientID); err != nil {
+	client, err := s.clientRepo.FindByID(clientID)
+	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, ErrClientNotFound
 		}
@@ -103,7 +136,11 @@ func (s *RiskService) SnapshotClient(clientID uint) (*domain.RiskSnapshot, error
 		return nil, err
 	}
 
-	snapshot := s.buildSnapshot(clientID, s.CalculateDaysOverdue(invoices))
+	days := s.CalculateDaysOverdue(invoices)
+
+	snapshot := s.buildSnapshot(clientID, days)
+	// adjust score by client segment
+	snapshot.Score = s.CalculateScoreWithSegment(days, client.Segment)
 
 	if err := s.riskRepo.Create(snapshot); err != nil {
 		return nil, err
